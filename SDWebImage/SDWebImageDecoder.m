@@ -13,11 +13,20 @@
 @implementation UIImage (ForceDecode)
 
 + (UIImage *)decodedImageWithImage:(UIImage *)image {
-    if (image.images) {
+    
+    if ([[[UIDevice currentDevice] systemVersion] integerValue] >= 7) {
+        
+        /* Forced decoding doesn't release huge amounts of memory ("CG Raster Data")
+         in iOS 7. Turning off forced decoding until the problem is resolved */
+        
+        return image;
+        
+    } else if (image.images) {
+        
         // Do not decode animated images
         return image;
     }
-
+    
     CGImageRef imageRef = image.CGImage;
     CGSize imageSize = CGSizeMake(CGImageGetWidth(imageRef), CGImageGetHeight(imageRef));
     CGRect imageRect = (CGRect){.origin = CGPointZero, .size = imageSize};
